@@ -1,0 +1,210 @@
+[
+  {
+      "id": "1135eefa3b0c61df",
+      "type": "inject",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "",
+      "props": [],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "x": 450,
+      "y": 120,
+      "wires": [
+          [
+              "a2769e9473170caa"
+          ]
+      ]
+  },
+  {
+      "id": "37b6a644b42dddb3",
+      "type": "debug",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "debug 1",
+      "active": true,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "payload",
+      "targetType": "msg",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 980,
+      "y": 120,
+      "wires": []
+  },
+  {
+      "id": "a2769e9473170caa",
+      "type": "wnsm",
+      "z": "5d5ea87d01c5c7e6",
+      "config": "2fe01941af6497c4",
+      "requestType": "metering_points_values",
+      "valuesType": "DAY",
+      "period": "previous_month",
+      "meterTypes": "ALL",
+      "meteringPoint": "",
+      "name": "",
+      "x": 580,
+      "y": 120,
+      "wires": [
+          [
+              "7617389087bf4531"
+          ]
+      ]
+  },
+  {
+      "id": "7617389087bf4531",
+      "type": "change",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "Calc monthly consumption",
+      "rules": [
+          {
+              "t": "set",
+              "p": "payload",
+              "pt": "msg",
+              "to": "payload.{\t    \"meteringPoint\": zaehlpunkt,\t    \"period\": $moment(zaehlwerke[0].messwerte[0].zeitVon).format(\"YYYY-MM\"),\t    \"consumptionWH\": $sum(zaehlwerke[0].messwerte.messwert)\t}",
+              "tot": "jsonata"
+          }
+      ],
+      "action": "",
+      "property": "",
+      "from": "",
+      "to": "",
+      "reg": false,
+      "x": 780,
+      "y": 120,
+      "wires": [
+          [
+              "37b6a644b42dddb3"
+          ]
+      ]
+  },
+  {
+      "id": "de2a2c8eb0dc5416",
+      "type": "inject",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "",
+      "props": [
+          {
+              "p": "dateFrom",
+              "v": "2024-12-25",
+              "vt": "str"
+          },
+          {
+              "p": "dateTo",
+              "v": "2025-01-01",
+              "vt": "str"
+          }
+      ],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "x": 450,
+      "y": 160,
+      "wires": [
+          [
+              "37cc3d8519ba3665"
+          ]
+      ]
+  },
+  {
+      "id": "37cc3d8519ba3665",
+      "type": "wnsm",
+      "z": "5d5ea87d01c5c7e6",
+      "config": "2fe01941af6497c4",
+      "requestType": "metering_points_values",
+      "valuesType": "METER_READ",
+      "period": "custom",
+      "meterTypes": "ALL",
+      "meteringPoint": "",
+      "name": "",
+      "x": 580,
+      "y": 160,
+      "wires": [
+          [
+              "dae5168259a03462"
+          ]
+      ]
+  },
+  {
+      "id": "dae5168259a03462",
+      "type": "debug",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "debug 2",
+      "active": true,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "payload",
+      "targetType": "msg",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 720,
+      "y": 160,
+      "wires": []
+  },
+  {
+      "id": "a7fbd9115d8e760a",
+      "type": "inject",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "",
+      "props": [],
+      "repeat": "",
+      "crontab": "",
+      "once": false,
+      "onceDelay": 0.1,
+      "topic": "",
+      "x": 450,
+      "y": 200,
+      "wires": [
+          [
+              "3d7eaa0601921c33"
+          ]
+      ]
+  },
+  {
+      "id": "3d7eaa0601921c33",
+      "type": "wnsm",
+      "z": "5d5ea87d01c5c7e6",
+      "config": "2fe01941af6497c4",
+      "requestType": "metering_points_metadata",
+      "valuesType": "METER_READ",
+      "period": "custom",
+      "meterTypes": "ALL",
+      "meteringPoint": "",
+      "name": "",
+      "x": 580,
+      "y": 200,
+      "wires": [
+          [
+              "27ca2232bacde357"
+          ]
+      ]
+  },
+  {
+      "id": "27ca2232bacde357",
+      "type": "debug",
+      "z": "5d5ea87d01c5c7e6",
+      "name": "debug 3",
+      "active": true,
+      "tosidebar": true,
+      "console": false,
+      "tostatus": false,
+      "complete": "payload",
+      "targetType": "msg",
+      "statusVal": "",
+      "statusType": "auto",
+      "x": 720,
+      "y": 200,
+      "wires": []
+  },
+  {
+      "id": "2fe01941af6497c4",
+      "type": "wnsm-config",
+      "name": "Default"
+  }
+]

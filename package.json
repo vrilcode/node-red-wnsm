@@ -1,0 +1,35 @@
+{
+  "name": "@vrilcode/node-red-wnsm",
+  "description": "Wiener Netze Smart Meter API node for Node-RED",
+  "version": "2.0.0",
+  "keywords": [
+    "node-red",
+    "smart-meter",
+    "wiener-netze"
+  ],
+  "license": "GPL",
+  "homepage": "https://github.com/vrilcode/node-red-wnsm",
+  "author": "vrilcode (https://github.com/vrilcode)",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:vrilcode/node-red-wnsm.git"
+  },
+  "scripts": {
+    "client": "node --env-file=.env -- contrib/wnsm-client.mjs",
+    "publish": "npm publish --access public"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "node-red": {
+    "version": ">=4.0.0",
+    "nodes": {
+      "wnsm-config": "wnsm-config.js",
+      "wnsm": "wnsm.js"
+    }
+  },
+  "dependencies": {
+    "axios": "~1.7.9",
+    "dayjs": "~1.11.13"
+  }
+}

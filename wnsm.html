@@ -1,0 +1,159 @@
+<script type="text/javascript">
+  RED.nodes.registerType('wnsm', {
+    category: 'input',
+    color: '#bb5d8c',
+    defaults: {
+      config: {
+        type: 'wnsm-config',
+        value: '',
+        required: true,
+      },
+      requestType: {
+        value: 'metering_points_values',
+        required: true,
+      },
+      valuesType: {
+        value: 'METER_READ',
+      },      
+      period: {
+        value: 'current_month',
+      },
+      meterTypes: {
+        value: 'ALL',
+      },
+      meteringPoint: {
+        value: '',
+        validate: RED.validators.regex(/AT\d{31}|/),
+      },
+      name: {
+        value: '',
+      },
+    },
+    oneditprepare: function() {
+      $('#node-input-requestType').typedInput({
+        types: [{
+          value: 'requestType',
+          options: [
+            { value: 'metering_points_values', label: 'Get values' },
+            { value: 'metering_points_metadata', label: 'Get metadata' }
+          ]
+        }]
+      })
+      $('#node-input-requestType').change(function() {
+        switch ($('#node-input-requestType').val()) {
+          case 'metering_points_values':
+            $('#row-meterTypes').hide()
+            $('#row-valuesType').show()
+            $('#row-period').show()
+            break
+          case 'metering_points_metadata':
+            $('#row-valuesType').hide()
+            $('#row-period').hide()
+            $('#row-meterTypes').show()
+            break
+        }
+      })
+      
+      $('#node-input-valuesType').typedInput({
+        types: [{
+          value: 'valuesType',
+          options: [
+            { value: 'DAY', label: 'Daily values' },
+            { value: 'QUARTER_HOUR', label: '15-minute values' },
+            { value: 'METER_READ', label: 'Meter readings' },
+          ]
+        }]
+      })
+
+      $('#node-input-period').typedInput({
+        types: [{
+          value: 'period',
+          options: [
+            { value: 'current_month', label: 'Current month' },
+            { value: 'previous_month', label: 'Previous month' },
+            { value: 'yesterday', label: 'Yesterday' },
+            { value: 'last_three_days', label: 'Last three days' },
+            { value: 'custom', label: 'Custom period' },
+          ]
+        }]
+      })
+
+      $('#node-input-meterTypes').typedInput({
+        types: [{
+          value: 'meterTypes',
+          options: [
+            { value: 'ALL', label: 'All meters' },
+            { value: 'SMARTMETER', label: 'Smart meters' },
+          ]
+        }]
+      })
+    },
+    inputs: 1,
+    outputs: 1,
+    icon: 'font-awesome/fa-bolt',
+    label: function() {
+      return this.name || 'WNSM'
+    }
+  })
+</script>
+
+<script type="text/html" data-template-name="wnsm">
+  <div class="form-row">
+    <label for="node-input-config"><i class="fa fa-cog"></i> Config</label>
+    <input type="text" id="node-input-config">
+  </div>
+  <div class="form-row">
+    <label for="node-input-requestType"><i class="fa fa-globe"></i> Request</label>
+    <input type="text" id="node-input-requestType">
+  </div>
+  <div class="form-row" id="row-valuesType">
+    <label for="node-input-valuesType"><i class="fa fa-bar-chart-o"></i> Values type</label>
+    <input type="text" id="node-input-valuesType">
+  </div>  
+  <div class="form-row" id="row-period">
+    <label for="node-input-period"><i class="fa fa-calendar"></i> Period</label>
+    <input type="text" id="node-input-period">
+  </div>
+  <div class="form-row" id="row-meterTypes">
+    <label for="node-input-meterTypes"><i class="fa fa-tachometer"></i> Meter types</label>
+    <input type="text" id="node-input-meterTypes">
+  </div>
+  <div class="form-row" id="row-meteringPoint">
+    <label for="node-input-meteringPoint"><i class="fa fa-map-marker"></i> Metering point</label>
+    <input type="text" id="node-input-meteringPoint" placeholder="AT0000000000000000000000000000000">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name">
+  </div>
+</script>
+
+<script type="text/markdown" data-help-name="wnsm">
+This node provides access to Wiener Netze Smart Meter API. You can retrieve consumption values or meter readings of metering points (Zählpunkte) and metadata of metering points.
+
+### Inputs
+
+: dateFrom (string)      : Begin of date range for metering point values in format "YYYY-MM-DD"
+: dateTo (string)        : End of date range for metering point values in format "YYYY-MM-DD"
+: meteringPoint (string) : Restricts results to a specific metering point
+
+### Outputs
+
+: payload (object) : See details section and API docs link in references section
+
+### Details
+
+Request type and values type can only be set via node properties, not via input properties. If you retrieve just metadata, you could include non-smart meters as well.
+
+Custom date ranges must have a `dateFrom` *and* a `dateTo` input and the date values must be in the format "YYYY-MM-DD". The end date always corresponds to the time 00:00:00 of the following day. This means, for example, that a range from 01/Jan/2025 to 03/Jan/2025 must be specified as "2025-01-01" to "2025-01-04". If you only want to retrieve values for a single day, you must specify the following day as the end date. This means, for example, that 05/Jan/2025 is retrieved with a date range of "2025-01-05" to "2025-01-06".
+
+You can restrict results, be it metering point values or metadata, to a specific metering point, if you provide its number (Zählpunktnummer). This could be done via node property or via input property `meteringPoint`, but node property is dominant if both is provided.
+
+**Note**: Errors - including API response errors - are thrown as JS errors, but HTTP status codes are not always particularly meaningful. For example, a syntactically incorrect request can also lead to a HTTP error 500 instead of an error 400. This is the responsibility of the API provider.
+
+### References
+
+[Wiener Netze Smart Meter API docs](https://api-portal.wienerstadtwerke.at/portal/apis/7f8a1cce-2a7e-4b18-840b-b0387ed9a3fc/apidocumentation) - description of API response objects
+
+[GitHub](https://github.com/vrilcode/node-red-wnsm) - GitHub repository of this node
+</script>
