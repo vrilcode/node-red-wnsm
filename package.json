@@ -12,7 +12,7 @@
   "author": "vrilcode (https://github.com/vrilcode)",
   "repository": {
     "type": "git",
-    "url": "git@github.com:vrilcode/node-red-wnsm.git"
+    "url": "git+ssh://git@github.com/vrilcode/node-red-wnsm.git"
   },
   "scripts": {
     "client": "node --env-file=.env -- contrib/wnsm-client.mjs",
