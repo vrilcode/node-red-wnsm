@@ -1,6 +1,6 @@
 # Wiener Netze Smart Meter API node for Node-RED
 
-This package provides a node for [Node-RED](https://nodered.org/) to access the Wiener Netze Smart Meter API (see references). You can retrieve consumption values (Verbrauchsdaten), meter readings (Zählerstände) and metadata of metering points (Zählpunkte). Minimal example flows are included in directory `contrib`.
+This package provides a node for [Node-RED](https://nodered.org/) to access the Wiener Netze Smart Meter API (see references). You can retrieve consumption values (Verbrauchsdaten), meter readings (Zählerstände) and metadata of metering points (Zählpunkte). Minimal example flows are included in directory `examples`.
 
 # Installation
 
